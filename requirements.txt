@@ -1,2 +1,4 @@
 telebot
 PyTelegramBotAPI
+oauth2client
+gspread
