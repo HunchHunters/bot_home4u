@@ -4,10 +4,18 @@ import urllib
 import dropbox
 import re
 import gspread
+import random
+import spotipy
+import telebot
+from telebot import types
+from spotipy.oauth2 import SpotifyOAuth
+from spotipy import oauth2
 
 from oauth2client.service_account import ServiceAccountCredentials
-from parsing_memes import meme_matching,find_name,find_link_photo
+from parsing_memes import meme_matching, find_name, find_link_photo
+from parsing_db import ListIterator, parsing
 from parsing_dropbox import photo
+from spotify import put_playlist_to_db
 
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
@@ -18,22 +26,37 @@ bot = telebot.TeleBot('2037831985:AAGKohGKMRlAH-LuciaVefOzNPoN0kyfWIw')
 @bot.message_handler(commands=['start'])
 def start(message):
     username = message.chat.username
-    print(username)
     name = find_name(sheet,username)
     #user_char_data
     markup_inline = types.InlineKeyboardMarkup()
-    start_butt = types.InlineKeyboardButton(text='Начать', callback_data ='start'+username)
-    markup_inline.add(start_butt)
-    bot.send_message(message.chat.id, 'Привет, '+ name , reply_markup=markup_inline)
+    yes_butt = types.InlineKeyboardButton(text='Да!', callback_data ='has spotify')
+    no_butt = types.InlineKeyboardButton(text='Нет:(', callback_data ='no spotify')
+    markup_inline.add(yes_butt, no_butt)
+    playlist_url = bot.send_message(message.chat.id, 'У тебя есть spotify?')
 
+
+@bot.message_handler(content_types=["text"])
+def process_playlist(message):
+    username = message.chat.username
+    playlist_url = message.text
+    put_playlist_to_db(username, playlist_url)
 
 @bot.callback_query_handler(func=lambda call: True)
+
+def start_callback(call):
+    if call.data == 'has spotify':
+        playlist_url = bot.send_message(message.chat.id, 'Поделись ссылкой на свой плейлист в spotify!')
+
+
+
 def callback_inline(call):
     # Если сообщение из чата с ботом
     username = call.data[5:]
-    users_list = meme_matching(sheet, username)
-    users_gen = gereratorUsers(users_list)
-    print(next(users_gen))
+    meme_users = meme_matching(sheet, username)
+    music_match = parsing(username)
+    match_meme = ListIterator(meme_users)
+    match_music = ListIterator(music_match)
+
     if call.message:
         if call.data[0:5] == 'start':
             #bot settings
@@ -63,12 +86,6 @@ def callback_inline(call):
             bot.send_photo(call.message.chat.id, photo(url_photo))
             bot.send_message(call.message.chat.id,'msg', reply_markup=markup_inline)
 
-
-# def gereratorUsers(argument):
-#     try:
-#         yield argument
-#     except StopIteration:
-#         return argument[0]
 
 
 bot.polling(none_stop=True, interval=0)
