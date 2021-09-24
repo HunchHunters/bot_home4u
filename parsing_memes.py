@@ -2,7 +2,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 
-def find_name(sheet,username):
+def find_name(sheet, username):
 
     cell = sheet.find(username)
     row = cell.row
@@ -13,9 +13,16 @@ def find_link_photo(sheet, username):
 
     cell = sheet.find(username)
     row = cell.row
-    link = sheet.row_values(row)[4]
+    link = sheet.row_values(row)[27]
+    print(link)
     return link
 
+def find_name(sheet, username):
+
+    cell = sheet.find(username)
+    row = cell.row
+    link = sheet.row_values(row)[0]
+    return link
 
 def meme_matching(sheet, username):
 
@@ -25,7 +32,6 @@ def meme_matching(sheet, username):
     amount_of_users = len(users)
     scores_list = [i for i in range(amount_of_users)]
     scores_dict = dict(zip(users, scores_list))
-    print(username)
     cell = sheet.find(username)
     row = cell.row
     memes_user = sheet.row_values(row)[2:4]
