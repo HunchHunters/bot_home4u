@@ -1,4 +1,4 @@
-import telebot
+ import telebot
 from telebot import types
 import urllib
 import dropbox
@@ -29,10 +29,10 @@ def start(message):
     name = find_name(sheet,username)
     #user_char_data
     markup_inline = types.InlineKeyboardMarkup()
-    yes_butt = types.InlineKeyboardButton(text='Да!', callback_data ='has spotify')
-    no_butt = types.InlineKeyboardButton(text='Нет:(', callback_data ='no spotify')
+    yes_butt = types.InlineKeyboardButton(text='Музыка', callback_data ='ye' + username)
+    no_butt = types.InlineKeyboardButton(text='Мемчики', callback_data ='no' + username)
     markup_inline.add(yes_butt, no_butt)
-    playlist_url = bot.send_message(message.chat.id, 'У тебя есть spotify?')
+    bot.send_message(message.chat.id, 'Хотите мэтчи по музыке или по мемам?/n', reply_markup=markup_inline)
 
 
 @bot.message_handler(content_types=["text"])
@@ -44,9 +44,34 @@ def process_playlist(message):
 @bot.callback_query_handler(func=lambda call: True)
 
 def start_callback(call):
-    if call.data == 'has spotify':
-        playlist_url = bot.send_message(message.chat.id, 'Поделись ссылкой на свой плейлист в spotify!')
+    username = call.data[2:]
+    if call.data[0:2] == 'ye':
+        markup_inline = types.InlineKeyboardMarkup()
+        back_butt = types.InlineKeyboardButton(text='Музыка', callback_data ='back')
+        markup_inline.add(back_butt)
+        playlist_url = bot.send_message(call.message.chat.id, 'Поделись ссылкой на свой плейлист в spotify!')
+        matching_for_meme_music(username)
 
+    if call.data == 'no':
+
+        markup_inline = types.InlineKeyboardMarkup()
+        back_butt = types.InlineKeyboardButton(text='Музыка', callback_data ='back')
+        markup_inline.add(back_butt)
+
+        meme_users = meme_matching(sheet, username)
+        music_match = parsing(username)
+        match_meme = ListIterator(meme_users)
+        matching_for_music(username,meme_users,music_users)
+
+    if call.data = 'back':
+        bot.send_message(message.chat.id, "Вы вернулись в меню", reply_markup=None)
+
+def matching_for_music(username):
+
+    music_match = parsing(username)
+    random_songs = 
+    match_music = ListIterator(music_match)
+    print(meme_users, music_match)
 
 
 def callback_inline(call):
@@ -56,6 +81,11 @@ def callback_inline(call):
     music_match = parsing(username)
     match_meme = ListIterator(meme_users)
     match_music = ListIterator(music_match)
+    markup_inline.add(dislike_butt,like_butt)
+    # text_to_reply = name+'\n'+is_vaccined
+    url_photo = find_link_photo(sheet,user_name)
+    bot.send_photo(call.message.chat.id, photo(url_photo))
+    bot.send_message(call.message.chat.id,'msg', reply_markup = markup_inline)
 
     if call.message:
         if call.data[0:5] == 'start':

@@ -1,3 +1,21 @@
+list_users = ['followthesun', 'Ad_dregal']
+
+def obtain_songs(list_users):
+    import sqlite3
+    import random
+    connection = sqlite3.connect('db_spotify.db')
+    cursor = connection.cursor()
+    users_rand_songs = []
+    for username in list_users:
+        cursor.execute("SELECT * FROM SpotifyMatching WHERE username = ?", (username,))
+        user_data = cursor.fetchone()
+        connection.commit()
+        playlist_user = user_data[1].split('/next/')
+        playlist_user = playlist_user[1:]
+        users_rand_songs.append(random.sample(playlist_user,5))
+    print(users_rand_songs)
+
+obtain_songs(list_users)
 
 def parsing(username):
     import sqlite3
