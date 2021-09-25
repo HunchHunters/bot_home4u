@@ -1,13 +1,21 @@
 import dropbox
 import re
 import requests
-dbx = dropbox.Dropbox('sl.A5Eu7JAHSplw774HXkeV_pRmqNwaVJc2T7rTEFBMwAepfnnfGtj7oXDQXAtl4WeT0awnjOvBCPEl889_RYgySUZlqJSxBjCORqTTVJlR4Q67qaPKTK3_NB-M7socXUmqTIUPohP8TNl4')
+
+
 
 def photo(url_gsheet):
+    try:
+        dbx = dropbox.Dropbox('sl.A5KHwD4NCJswC_EbPwv6xkxs1Koq3bFabhfVlq31iVt_1TppsX9IMHpb42HpxZh--X98cvel1_9ifXi9UGy4aXWoQS_00AYdkwj1e4B3RoB_7ahY2kYvzIjKwnFFoljnYYdwEWTjcdv7')
+
+    except AuthError:
+        raise TypeError
+
     req_bytes = requests.get(url_gsheet).content
     my_json = req_bytes.decode()
     str = my_json
-    exp = r'>.{2,}(.png|.jpg)'
+    print(str)
+    exp = r'>.{2,}(.png|.jpg|.jpeg)'
     result = re.search(exp, str).group(0)
     result = result[1:]
     # start_index = my_json.find('?dl=0">')

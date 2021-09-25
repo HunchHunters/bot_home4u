@@ -37,19 +37,21 @@ def start(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def start_callback(call):
-    try:
-        username = call.data[5:]
-        music_match = parsing(username)
-        match_music = ListIterator(music_match)
-    except StopIteration:
-        markup_inline = types.InlineKeyboardMarkup()
-        bot.send_message(call.message.chat.id,'Больше нет пользователей:(',reply_markup=markup_inline)
-
+    username = call.data[5:]
+    music_match = parsing(username)
+    match_music = ListIterator(music_match)
     if call.data[0:5] == 'yemus':
         playlist_url = bot.send_message(call.message.chat.id, 'Поделись ссылкой на свой плейлист в spotify!')
         bot.register_next_step_handler(playlist_url, matching_for_music)
 
     if call.data[0:5] == 'stmus':
+        # try:
+        #     username = call.data[5:]
+        #     music_match = parsing(username)
+        #     match_music = ListIterator(music_match)
+        # except StopIteration:
+        #     markup_inline = types.InlineKeyboardMarkup()
+        #     bot.send_message(call.message.chat.id,'Больше нет пользователей:(',reply_markup=markup_inline)
         try:
             user_name = next(match_music)
             markup_inline_ = types.InlineKeyboardMarkup()
@@ -58,10 +60,10 @@ def start_callback(call):
             song_str = ''
             for song in random_songs:
                 song_str = song_str +song + '\n'
-                print(song_str)
+                #print(song_str)
             url_photo = find_link_photo(sheet, user_name)
             like_butt_ = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-            dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data ='dl')
+            dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data ='dlmus'+username)
             markup_inline_.add(dislike_butt_,like_butt_)
             bot.send_photo(call.message.chat.id, photo(url_photo))
 
@@ -74,26 +76,30 @@ def start_callback(call):
 
     if call.data[0:5] == 'dlmus':
         try:
+
             user_name = next(match_music)
-            markup_inline = types.InlineKeyboardMarkup()
-            music_match = parsing(user_name)
+            markup_inline_1 = types.InlineKeyboardMarkup()
             random_songs = obtain_songs(user_name)
             song_str = ''
             for song in random_songs:
-                song_str = song_str +'\n'
+                song_str = song_str +song+'\n'
+
             url_photo = find_link_photo(sheet, user_name)
-            like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-            dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data ='dl')
-            markup_inline.add(dislike_butt,like_butt)
-            #bot.send_photo(call.message.chat.id, photo(url_photo))
-            #bot.send_message(call.message.chat.id, song_str, reply_markup = markup_inline)
+            like_butt_ = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
+            dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data ='dlmus'+username)
+            markup_inline_1.add(dislike_butt_,like_butt_)
+            bot.send_photo(call.message.chat.id, photo(url_photo))
+            bot.send_message(call.message.chat.id, song_str, reply_markup = markup_inline_1)
 
         except StopIteration and TypeError:
-            bot.send_message(call.message.chat.id, 'Больне нет пользователей:()', reply_markup = markup_inline)
+            bot.send_message(call.message.chat.id, 'Больне нет пользователей:()', reply_markup = markup_inline_1)
 
 
     if call.data[0:5] == 'stmem':
+        print(music_match)
         match_memes = ListIterator(music_match)
+        print(next(match_memes))
+        print('hui')
         try:
             markup_inline = types.InlineKeyboardMarkup()
             user_name = next(match_memes)

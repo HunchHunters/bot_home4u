@@ -28,8 +28,9 @@ def obtain_list_artists(message):
         fields=fields,
         additional_types=["track"],
     )["items"]
+    atrisi_list = []
     for song in pl_items:
-        print(song["track"]["artists"][0]['name'])
-
+        atrisi_list.append(song["track"]["artists"][0]['name']))s
+    return atrisi_list
 
 bot.polling(none_stop=True, interval=0)

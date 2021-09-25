@@ -15,7 +15,6 @@ def put_playlist_to_db(username, pl_uri):
             client_secret = '5bd3941b4763402aac9fbc239b4b068a'
          )
     sp = spotipy.Spotify(auth_manager=auth_manager_)
-    print(pl_uri)
     pl_name = sp.playlist(pl_uri)["name"]
     pl_items = sp.playlist_items(
         pl_uri,
@@ -33,4 +32,5 @@ def put_playlist_to_db(username, pl_uri):
     cursor = connection.cursor()
     cursor.execute("INSERT INTO SpotifyMatching ('username','Liked Artists') VALUES (?, ?)", (username,artist_str))
     connection.commit()
-    print(artist_str)
+    
+    return True
