@@ -6,7 +6,7 @@ import requests
 
 def photo(url_gsheet):
     try:
-        dbx = dropbox.Dropbox('sl.A5Li1Tc-Dcp-vFiw6W-2rKXNkNXjh7uiW-suIrtDzli8VnQLkUfbkxbQu0ktC7QNoK7A8795xp1iInIRrO8hpG6fmaZ-TTw3yUWchPuhqtwcVN5od5ABculB9DBCe42X3895HwI8o09N')
+        dbx = dropbox.Dropbox('sl.A5JvLfuN4WMfXF5Vq0YppYcFTWamtOQjC-eD0wCJa_d-azm9S9qWJZk-VG1cqQkQqpnOtAtvdpcZqbKkwv1u8-3PY2przxVq-z-VosUNpLDuooJHjDezlxIEFsxQlngH2iwrKZBP28qp')
 
     except AuthError:
         raise TypeError

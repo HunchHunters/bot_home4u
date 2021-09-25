@@ -1,19 +1,30 @@
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
-client = gspread.authorize(creds)
-sheet = client.open("Tilda_Form_4559105_20210922195121").sheet1
 
 
-def find_name(sheet, username):
+def find_name(username):
+    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+    client = gspread.authorize(creds)
+    spreadsheet  = client.open("Tilda_Form_4559105_20210922195121")
+    sheet = spreadsheet.sheet1
+    if (end_time - start_time).total_seconds() < 1:
+        sleep(1.01 - (end_time - start_time).total_seconds())
 
     cell = sheet.find(username)
     row = cell.row
     name = sheet.row_values(row)[0]
     return name
 
-def find_link_photo(sheet, username):
+def find_link_photo(username):
+    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+    client = gspread.authorize(creds)
+    spreadsheet  = client.open("Tilda_Form_4559105_20210922195121")
+    sheet = spreadsheet.sheet1
+    if (end_time - start_time).total_seconds() < 1:
+        sleep(1.01 - (end_time - start_time).total_seconds())
 
     cell = sheet.find(username)
     row = cell.row
@@ -21,15 +32,30 @@ def find_link_photo(sheet, username):
     print(link)
     return link
 
-def find_name(sheet, username):
+# def find_name(username):
+#     import gspread
+#     from oauth2client.service_account import ServiceAccountCredentials
+#     start_time = datetime.datetime.now()
+#     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+#     creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+#     client = gspread.authorize(creds)
+#     sheet = client.open("Tilda_Form_4559105_20210922195121").sheet1
+#     end_time = datetime.datetime.now()
+#     if (end_time - start_time).total_seconds() < 1:
+#         sleep(1.01 - (end_time - start_time).total_seconds())
+#
+#     cell = sheet.find(username)
+#     row = cell.row
+#     link = sheet.row_values(row)[0]
+#     return link
 
-    cell = sheet.find(username)
-    row = cell.row
-    link = sheet.row_values(row)[0]
-    return link
+def meme_matching( username):
 
-def meme_matching(sheet, username):
-
+    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+    client = gspread.authorize(creds)
+    spreadsheet  = client.open("Tilda_Form_4559105_20210922195121")
+    sheet = spreadsheet.sheet1
     list_of_dicts = sheet.get_all_records()
     len_list = len(list_of_dicts)
     users = sheet.col_values(2)[1:]
@@ -69,7 +95,14 @@ def meme_matching(sheet, username):
     sorted_keys = sorted(scores_dict, key=scores_dict.get,reverse = True)  # [1, 3, 2]
     for _ in sorted_keys:
         sorted_dict[_] = scores_dict[_]
-    list_to_match = list(sorted_dict.keys())[1:]
-    return list_to_match
 
-meme_matching(sheet, 'followthesun')
+    list_to_match = list(sorted_dict.keys())[1:]
+
+    UsernamesNamesPhotos = {}
+
+    for name in list_to_match:
+        cell = sheet.find(name)
+        row = cell.row
+        UsernamesNamesPhotos[name] = [sheet.row_values(row)[0], sheet.row_values(row)[27]]
+
+    return UsernamesNamesPhotos

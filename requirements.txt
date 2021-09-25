@@ -3,8 +3,6 @@ PyTelegramBotAPI
 oauth2client
 gspread
 requests
-urllib.parse
-telebot.types
 urllib
 dropbox
 re

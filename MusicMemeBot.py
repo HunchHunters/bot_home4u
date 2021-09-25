@@ -3,7 +3,6 @@ from telebot import types
 import urllib
 import dropbox
 import re
-import gspread
 import random
 import spotipy
 import telebot
@@ -17,10 +16,10 @@ from parsing_db import ListIterator, parsing, obtain_songs
 from parsing_dropbox import photo
 from spotify import put_playlist_to_db
 
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
-client = gspread.authorize(creds)
-sheet = client.open("Tilda_Form_4559105_20210922195121").sheet1
+# scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+# creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+# client = gspread.authorize(creds)
+# sheet = client.open("Tilda_Form_4559105_20210922195121").sheet1
 
 bot = telebot.TeleBot('2037831985:AAGKohGKMRlAH-LuciaVefOzNPoN0kyfWIw')
 
@@ -28,7 +27,7 @@ bot = telebot.TeleBot('2037831985:AAGKohGKMRlAH-LuciaVefOzNPoN0kyfWIw')
 def start(message):
     I_mem, I_mus = 0, 0
     username = message.chat.username
-    name = find_name(sheet,username)
+    name = find_name(username)
     #user_char_data
     markup_inline = types.InlineKeyboardMarkup()
     yes_butt = types.InlineKeyboardButton(text = 'Музыка', callback_data = str(I_mus)  + '|' + 'yemus' + username)
@@ -41,9 +40,9 @@ def start_callback(call):
 
     second_param = call.data.split('|')[1]
     username = second_param[5:]
-    print(call.data)
-    print(username)
-    meme_match = meme_matching(sheet, username)
+    meme_match_dict = meme_matching(username)
+    print(meme_match_dict)
+    meme_match = list(meme_match_dict.keys())
     print(meme_match)
     try:
         music_match = parsing(username)
@@ -66,7 +65,7 @@ def start_callback(call):
             for song in random_songs:
                 song_str = song_str +song + '\n'
                 #print(song_str)
-            url_photo = find_link_photo(sheet, user_name)
+            url_photo = find_link_photo(user_name)
             like_butt_ = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
             dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mus)  + '|'+'dlmus'+username)
             markup_inline_.add(dislike_butt_,like_butt_)
@@ -92,7 +91,7 @@ def start_callback(call):
             for song in random_songs:
                 song_str = song_str +song + '\n'
                 #print(song_str)
-            url_photo = find_link_photo(sheet, user_name)
+            url_photo = find_link_photo(user_name)
             like_butt_ = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
             dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data =str(I_mus)+ '|' +'dlmus' + username)
             markup_inline_.add(dislike_butt_,like_butt_)
@@ -105,20 +104,19 @@ def start_callback(call):
             markup_inline_.add(dislike_butt_)
             bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
 
-
     if second_param[0:5] == 'stmem':
-    print(meme_match)
         username = second_param[5:]
         I_mem = int(call.data.split('|')[0])
         if I_mem < len(meme_match):
             user_name = meme_match[I_mem]
+            I_mem = I_mem + 1
             markup_inline = types.InlineKeyboardMarkup()
-            url_photo = find_link_photo(sheet, user_name)
+            url_photo = meme_match_dict[user_name][1]
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
             dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mem)  + '|'+'dlmem'+username)
             markup_inline.add(dislike_butt,like_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
-            name = find_name(sheet, user_name)
+            name =  meme_match_dict[user_name][0]
             bot.send_message(call.message.chat.id, name, reply_markup=markup_inline)
         else:
             I_mem = 0
@@ -133,10 +131,10 @@ def start_callback(call):
             user_name = meme_match[I_mem]
             I_mem = I_mem + 1
             markup_inline = types.InlineKeyboardMarkup()
-            url_photo = find_link_photo(sheet, user_name)
+            url_photo =  meme_match_dict[user_name][1]
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
             dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-            name = find_name(sheet, user_name)
+            name =  meme_match_dict[user_name][0]
             markup_inline.add(dislike_butt,like_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
             bot.send_message(call.message.chat.id, name, reply_markup = markup_inline)
