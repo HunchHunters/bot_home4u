@@ -32,5 +32,5 @@ def put_playlist_to_db(username, pl_uri):
     cursor = connection.cursor()
     cursor.execute("INSERT INTO SpotifyMatching ('username','Liked Artists') VALUES (?, ?)", (username,artist_str))
     connection.commit()
-    
+
     return True
