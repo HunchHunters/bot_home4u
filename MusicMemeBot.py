@@ -118,13 +118,13 @@ def start_callback(call):
             dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mem)  + '|'+'dlmem'+username)
             markup_inline.add(dislike_butt,like_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
-            name = find_name(sheet, username)
+            name = find_name(sheet, user_name)
             bot.send_message(call.message.chat.id, name, reply_markup=markup_inline)
         else:
             I_mem = 0
+            markup_inline_ = types.InlineKeyboardMarkup()
             dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mem)  + '|'+'dlmem'+username)
             markup_inline_.add(dislike_butt_)
-            markup_inline_ = types.InlineKeyboardMarkup()
             bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
 
     if second_param[0:5] == 'dlmem':
@@ -136,7 +136,7 @@ def start_callback(call):
             url_photo = find_link_photo(sheet, user_name)
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
             dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-            name = find_name(sheet, username)
+            name = find_name(sheet, user_name)
             markup_inline.add(dislike_butt,like_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
             bot.send_message(call.message.chat.id, name, reply_markup = markup_inline)
