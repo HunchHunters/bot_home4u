@@ -1,5 +1,9 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+client = gspread.authorize(creds)
+sheet = client.open("Tilda_Form_4559105_20210922195121").sheet1
 
 
 def find_name(sheet, username):
@@ -34,12 +38,32 @@ def meme_matching(sheet, username):
     scores_dict = dict(zip(users, scores_list))
     cell = sheet.find(username)
     row = cell.row
-    memes_user = sheet.row_values(row)[2:4]
-    memes_1 = sheet.col_values(3)[1:]
-
+    print(row)
+    memes_1 = sheet.col_values(23)[1:]
+    ###################
     for meme, user in zip(memes_1, users):
-        if meme == memes_1[0]:
+        if meme == memes_1[row-2]:
             scores_dict[user] =int(scores_dict[user]) + 1
+    memes_2 = sheet.col_values(24)[1:]
+    #####################
+    for meme, user in zip(memes_2, users):
+        if meme == memes_2[row-2]:
+            scores_dict[user] =int(scores_dict[user]) + 1
+    ####################
+    memes_3 = sheet.col_values(25)[1:]
+    for meme, user in zip(memes_3, users):
+        if meme == memes_3[row-2]:
+            scores_dict[user] =int(scores_dict[user]) + 1
+    ########################
+    memes_4 = sheet.col_values(26)[1:]
+    for meme, user in zip(memes_4, users):
+        if meme == memes_4[row-2]:
+            scores_dict[user] =int(scores_dict[user]) + 1
+    ###################
+    memes_5 = sheet.col_values(27)[1:]
+    for meme, user in zip(memes_5, users):
+        if meme == memes_5[row-2]:
+            scores_dict[user] = int(scores_dict[user]) + 1
 
     sorted_dict = {}
     sorted_keys = sorted(scores_dict, key=scores_dict.get,reverse = True)  # [1, 3, 2]
@@ -47,3 +71,5 @@ def meme_matching(sheet, username):
         sorted_dict[_] = scores_dict[_]
     list_to_match = list(sorted_dict.keys())[1:]
     return list_to_match
+
+meme_matching(sheet, 'followthesun')

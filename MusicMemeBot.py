@@ -77,12 +77,12 @@ def start_callback(call):
             dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mus)  + '|'+'dlmus'+username)
             markup_inline_.add(dislike_butt_)
             markup_inline_ = types.InlineKeyboardMarkup()
+            start
             bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
 
     if second_param[0:5] == 'dlmus':
         I_mus = int( call.data.split('|')[0])
         if I_mus < len(music_match):
-            print(music_match)
             user_name = music_match[I_mus]
             I_mus = I_mus + 1
             markup_inline_ = types.InlineKeyboardMarkup()
@@ -107,7 +107,7 @@ def start_callback(call):
 
 
     if second_param[0:5] == 'stmem':
-
+    print(meme_match)
         username = second_param[5:]
         I_mem = int(call.data.split('|')[0])
         if I_mem < len(meme_match):
