@@ -142,10 +142,9 @@ def start_callback(call):
             bot.send_message(call.message.chat.id, name, reply_markup = markup_inline)
         else:
             I_mem = 0
+            markup_inline_ = types.InlineKeyboardMarkup()
             dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-            markup_inline_ = types.InlineKeyboardMarkup()
             markup_inline_.add(dislike_butt_)
-            markup_inline_ = types.InlineKeyboardMarkup()
             bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
 
 @bot.message_handler(content_types=['text'])
