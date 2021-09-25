@@ -84,6 +84,4 @@ def meme_matching(username, sheet):
     for user in list_to_match:
         dict_to_match[user] = [users_dict[user][0], users_dict[user][1]]
 
-    print(dict_to_match)
-
     return dict_to_match

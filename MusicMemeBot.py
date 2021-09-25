@@ -55,19 +55,19 @@ def start_callback(call):
 ###########START MUSIC MATCH##########################
     if second_param[0:5] == 'stmus':
         I_mus = int( call.data.split('|')[0])
+        markup_inline_ = types.InlineKeyboardMarkup()
         if I_mus < len(music_match):
             user_name = music_match[I_mus]
             I_mus = I_mus + 1
-            markup_inline_ = types.InlineKeyboardMarkup()
             music_match = parsing(user_name)
             random_songs = obtain_songs(user_name)
-            song_str = ''
+            song_str = 'Мои песни:'
             for song in random_songs:
                 song_str = song_str +song + '\n'
                 #print(song_str)
-            url_photo = find_link_photo(user_name)
+            url_photo = find_link_photo(user_name, sheet)
             like_butt_ = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-            dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mus)  + '|'+'dlmus'+username)
+            dislike_butt_ = types.InlineKeyboardButton(text='Дальше', callback_data = str(I_mus)  + '|'+'dlmus'+username)
             markup_inline_.add(dislike_butt_,like_butt_)
             bot.send_photo(call.message.chat.id, photo(url_photo))
             bot.send_message(call.message.chat.id, song_str, reply_markup = markup_inline_)
@@ -77,7 +77,7 @@ def start_callback(call):
             markup_inline_.add(dislike_butt_)
             markup_inline_ = types.InlineKeyboardMarkup()
             start
-            bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
+            bot.send_message(call.message.chat.id, 'Пользователи закончились \n Для возврата в главное меню введи \start', reply_markup = markup_inline_)
 
     if second_param[0:5] == 'dlmus':
         I_mus = int( call.data.split('|')[0])
@@ -87,13 +87,13 @@ def start_callback(call):
             markup_inline_ = types.InlineKeyboardMarkup()
             music_match = parsing(user_name)
             random_songs = obtain_songs(user_name)
-            song_str = ''
+            song_str = 'Мои песни:'
             for song in random_songs:
                 song_str = song_str +song + '\n'
                 #print(song_str)
             url_photo = find_link_photo(user_name, sheet)
             like_butt_ = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-            dislike_butt_ = types.InlineKeyboardButton(text='Дизлайк:(', callback_data =str(I_mus)+ '|' +'dlmus' + username)
+            dislike_butt_ = types.InlineKeyboardButton(text='Дальше', callback_data =str(I_mus)+ '|' +'dlmus' + username)
             markup_inline_.add(dislike_butt_,like_butt_)
             bot.send_photo(call.message.chat.id, photo(url_photo))
             bot.send_message(call.message.chat.id, song_str, reply_markup = markup_inline_)
@@ -102,7 +102,7 @@ def start_callback(call):
             markup_inline_ = types.InlineKeyboardMarkup()
             dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mus)  + '|'+'dlmus'+username)
             markup_inline_.add(dislike_butt_)
-            bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
+            bot.send_message(call.message.chat.id, 'Пользователи закончились:( \n Для возврата в главное меню введи /start', reply_markup = markup_inline_)
 
     if second_param[0:5] == 'stmem':
         username = second_param[5:]
@@ -113,7 +113,7 @@ def start_callback(call):
             markup_inline = types.InlineKeyboardMarkup()
             url_photo = meme_match_dict[user_name][1]
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-            dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mem)  + '|'+'dlmem'+username)
+            dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data = str(I_mem)  + '|'+'dlmem'+username)
             markup_inline.add(dislike_butt,like_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
             name =  meme_match_dict[user_name][0]
@@ -134,7 +134,7 @@ def start_callback(call):
             markup_inline = types.InlineKeyboardMarkup()
             url_photo =  meme_match_dict[user_name][1]
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-            dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data = str(I_mem)  + '|'+'dlmem'+username)
+            dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data = str(I_mem)  + '|'+'dlmem'+username)
             name =  meme_match_dict[user_name][0]
             markup_inline.add(dislike_butt,like_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
@@ -144,7 +144,7 @@ def start_callback(call):
             markup_inline_ = types.InlineKeyboardMarkup()
             dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mem)  + '|'+'dlmem'+username)
             markup_inline_.add(dislike_butt_)
-            bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
+            bot.send_message(call.message.chat.id, 'Пользователи закончились \n Для возврата в главное меню введи /start', reply_markup = markup_inline_)
 
 @bot.message_handler(content_types=['text'])
 def matching_for_music(message):
@@ -158,6 +158,6 @@ def matching_for_music(message):
         markup_inline.add(start_butt)
         bot.send_message(message.chat.id, 'Хороший вкус!', reply_markup = markup_inline)
     except Exception as e :
-        bot.send_message(message.chat.id, 'Неправильный адрес плэйлиста!\nВведите корректный адрес или выберите категорию "Мемчики" в главном меню', reply_markup = markup_inline)
+        bot.send_message(message.chat.id, 'Неправильный адрес плэйлиста!\nВведите корректный адрес или выберите категорию "Мемчики" в главном меню /start', reply_markup = markup_inline)
 
 bot.polling(none_stop=True, interval=0)

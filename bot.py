@@ -44,7 +44,7 @@ def callback_inline(call):
             name = user_data[0]
             url_photo = user_data[4]
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + name + '?start=+666')
-            dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data='dislike')
+            dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data='dislike')
             markup_inline.add(dislike_butt,like_butt)
 
             text_to_reply = name+'\n'+is_vaccined
@@ -71,7 +71,7 @@ def callback_inline(call):
             markup_inline = types.InlineKeyboardMarkup()
             markup_inline.row_width = 7
             like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' +username + '?start=+666')
-            dislike_butt = types.InlineKeyboardButton(text='Дизлайк:(', callback_data='dislike')
+            dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data='dislike')
             markup_inline.add(like_butt, dislike_butt)
             bot.send_photo(call.message.chat.id, photo(url_photo))
             bot.send_message(call.message.chat.id,text_to_reply+money_emoji, reply_markup=markup_inline)
