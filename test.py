@@ -1,1 +1,3 @@
-print(round(23.33333,2))
+
+if not a:
+    print('hui')
