@@ -27,7 +27,9 @@ sheet = spreadsheet.sheet1
 bot = telebot.TeleBot('2037831985:AAGKohGKMRlAH-LuciaVefOzNPoN0kyfWIw')
 
 @bot.message_handler(commands=['start'])
+
 def start(message):
+
     meme_match_dict = []
     bot.send_message(message.chat.id, 'Привет!\nЯ помогаю найти соедей, используя твои предпочтения в быту и с учетом мемов, которые ты выбрал\nCreated by team 43 in Innowation Workshop @skoltech' +''+'\n@followthesun, @sub_mar, @annetta897, @artem_vergazov, @A_dderal')
     I_mem, I_mus = 0, 0
@@ -41,16 +43,15 @@ def start(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def start_callback(call):
-    bot.send_message(call.message.chat.id, 'Ваши пары загружаются...')
-    second_param = call.data.split('|')[1]
-    username = second_param[5:]
-    time.sleep(1)
     try:
-        print('sdfsdf')
+        bot.send_message(call.message.chat.id, 'Ваши пары загружаются...')
+        second_param = call.data.split('|')[1]
+        username = second_param[5:]
+        time.sleep(1)
         meme_match_dict = meme_matching(username, sheet)
         meme_match = list(meme_match_dict.keys())
-    except KeyError:
-        bot.send_message(call.message.chat.id, 'Проверьте, что вы заполнили форму \n' + 'http://flat4u.tilda.ws/choose_memes')
+    except BaseException:
+        bot.send_message(call.message.chat.id, 'Перейдите в главное меню /start', )
     try:
         music_match = parsing(username)
     except StopIteration:
@@ -80,7 +81,7 @@ def start_callback(call):
             bot.send_message(call.message.chat.id, song_str, reply_markup = markup_inline_)
         else:
             I_mus = 0
-            dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mus)  + '|'+'dlmus'+username)
+            dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mus)  + '|'+'dlmus'+username,)
             markup_inline_.add(dislike_butt_)
             markup_inline_ = types.InlineKeyboardMarkup()
             start
@@ -113,54 +114,25 @@ def start_callback(call):
 
     if second_param[0:5] == 'stmem':
         try:
-            username = second_param[5:]
-            I_mem = int(call.data.split('|')[0])
-            if I_mem < len(meme_match):
+            range_i = range(len(meme_match))
+            for I_mem in range(len(meme_match)):
                 user_name = meme_match[I_mem]
                 I_mem = I_mem + 1
                 markup_inline = types.InlineKeyboardMarkup()
                 url_photo = meme_match_dict[user_name][1]
                 like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-                dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-                markup_inline.add(dislike_butt,like_butt)
+                #dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data = str(I_mem)  + '|'+'dlmem'+username)
+                markup_inline.add(like_butt)
                 bot.send_photo(call.message.chat.id, photo(url_photo))
                 name =  meme_match_dict[user_name][0]
                 str_to_match = ''
-                str_to_match = name + '\n' + 'Ваша совместимость ' + str(meme_match_dict[user_name][4]) + '\n'+'Бюджет ' + meme_match_dict[user_name][2] +'\n'+ 'Время сна ' +  meme_match_dict[user_name][3]
+                str_to_match = name + '\n' + 'Ваша совместимость ' + str(round(meme_match_dict[user_name][4], 2)) + '\n'+'Бюджет ' + meme_match_dict[user_name][2] +'\n'+ 'Время сна ' +  meme_match_dict[user_name][3]
                 bot.send_message(call.message.chat.id, str_to_match, reply_markup=markup_inline)
-            else:
-                I_mem = 0
-                markup_inline_ = types.InlineKeyboardMarkup()
-                dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-                markup_inline_.add(dislike_butt_)
-                bot.send_message(call.message.chat.id, 'Пользователи закончились', reply_markup = markup_inline_)
-        except BaseException :
-            bot.send_message(call.message.chat.id, 'Перейдите в главное меню /start')
-
-    if second_param[0:5] == 'dlmem':
-
-        try:
-            I_mem = int(call.data.split('|')[0])
-            if I_mem < len(meme_match):
-                user_name = meme_match[I_mem]
-                I_mem = I_mem + 1
-                markup_inline = types.InlineKeyboardMarkup()
-                url_photo =  meme_match_dict[user_name][1]
-                like_butt = types.InlineKeyboardButton(text='Лайк!', url='https://t.me/' + user_name + '?start=+666')
-                dislike_butt = types.InlineKeyboardButton(text='Дальше', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-                name =  meme_match_dict[user_name][0]
-                markup_inline.add(dislike_butt,like_butt)
-                bot.send_photo(call.message.chat.id, photo(url_photo))
-                str_to_match = name + '\n' + 'Ваша совместимость ' + str(meme_match_dict[user_name][4]) + '\n'+'Бюджет ' + meme_match_dict[user_name][2] + '\n' + 'Время сна ' +  meme_match_dict[user_name][3]
-                bot.send_message(call.message.chat.id, str_to_match, reply_markup=markup_inline)
-            else:
-                I_mem = 0
-                markup_inline_ = types.InlineKeyboardMarkup()
-                dislike_butt_ = types.InlineKeyboardButton(text='Начнем сначала?', callback_data = str(I_mem)  + '|'+'dlmem'+username)
-                markup_inline_.add(dislike_butt_)
-                bot.send_message(call.message.chat.id, 'Пользователи закончились \n Для возврата в главное меню введи /start', reply_markup = markup_inline_)
+            if I_mem == range_i:
+                bot.send_message(call.message.chat.id, 'Пользователи закончились \n Для возврата в главное меню введи /start', reply_markup = markup_inline)
         except BaseException:
-            bot.send_message(call.message.chat.id, 'Перейдите в главное меню /start')
+            bot.send_message(call.message.chat.id, 'Перейдите в главное меню /start', )
+
 
 @bot.message_handler(content_types=['text'])
 def matching_for_music(message):

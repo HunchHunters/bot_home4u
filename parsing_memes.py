@@ -2,7 +2,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from spotipy.oauth2 import SpotifyOAuth
 import time
-
+#
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
 client = gspread.authorize(creds)
@@ -17,7 +17,7 @@ def find_link_photo(username, sheet):
     return link
 
 def getDictFromUsername(username):
-    print(username)
+
     time.sleep(1)
     cell = sheet.find(username)
     rowNum = cell.row
@@ -44,10 +44,24 @@ def meme_matching(username, sheet):
     time.sleep(1)
     users_dict = {}
     scores_dict = {}
+
+    index_user = 0
     for data in list_of_dicts:
+        if data['telegram'] == username:
+            index_user = index_user + 1
+            break
+
+    for _ in range(len(list_of_dicts)):
+
+        comp_score = habbitsCompatibility( list_of_dicts[_], list_of_dicts[index_user])
+        scores_dict[list_of_dicts[_]['telegram']] = comp_score
+
+    for data in list_of_dicts:
+        correct_login = data['telegram']
         if data['telegram'][0] == '@':
-            data['telegram'] = data['telegram'][1:]
-        users_dict[data['telegram']] = [data['name'],
+            correct_login = data['telegram'][1:]
+        users_dict[correct_login] = [
+                                data['name'],
                                 data['Фото_которым_вы_хотите_поделиться_ваша_фотография_любимый_мем_и_т_д_'],
                                 data['meme_form1'],
                                 data['meme_form2'],
@@ -55,12 +69,13 @@ def meme_matching(username, sheet):
                                 data['meme_form4'],
                                 data['meme_form5'],
                                 data['budget'],
-                                data['bedtime']
+                                data['bedtime'],
                                 ]
-        scores_dict[data['telegram']] = 0
 
+        scores_dict[correct_login] = 0
 
     users_list = list(users_dict.keys())
+
 
     for user in users_list:
 
@@ -75,11 +90,14 @@ def meme_matching(username, sheet):
         if users_dict[user][6] == users_dict[username][6]:
             scores_dict[user] = scores_dict[user] + 1
 
-    d_scores = {}
+
     for user in scores_dict:
         norming_meme_score = scores_dict[user]/6
-        compatibility = habbitsTest(username, user)
-        scores_dict[user] = compatibility * norming_meme_score
+        compatibility = 0.5
+        scores_dict[user] = round(compatibility * norming_meme_score,2)*100
+
+    print(scores_dict)
+    d_scores = {}
 
     sorted_dict = {}
     sorted_keys = sorted(scores_dict, key=scores_dict.get, reverse = True)  # [1, 3, 2]
@@ -87,14 +105,18 @@ def meme_matching(username, sheet):
         sorted_dict[_] = scores_dict[_]
 
     list_to_match = list(sorted_dict.keys())[1:]
-
     dict_to_match = {}
     for user in list_to_match:
-        dict_to_match[user] = [users_dict[user][0], users_dict[user][1],users_dict[user][7], users_dict[user][8], scores_dict[user][0], d_scores[user][1]]
-
+        if scores_dict[user] == 0:
+            pass
+        else:
+            dict_to_match[user] = [users_dict[user][0], users_dict[user][1], users_dict[user][7], users_dict[user][8], scores_dict[user]]
     print(dict_to_match)
     return dict_to_match
 
+
+def lifestyle_check():
+    pass
 
 def unifyString(string):
     return string.replace(' ', '').replace('-', '').lower()
@@ -116,15 +138,6 @@ def banCheck(ans1, ans2):
        ans1['vaccination_status'] == 'Не вакцинирован':
         print('Ban for COVID')
         return False
-
-    # # Metro station check.
-    # metro1 = set(unifyString(ans1['metro']).split(','))
-    # metro2 = set(unifyString(ans2['metro']).split(','))
-    # common_stations = metro1 & metro2
-    # if len(common_stations) < 1:
-    #     print('Ban for metro')
-    #     return False
-    # print(f'Common metro stations: {common_stations}')
 
     # Smoke check.
     if ans1['smoke_tolerance'] == 'Да' and ans2['smokes'] == 'Да' or \
@@ -301,15 +314,15 @@ def habbitsTest(username1, username2):
     strValuesToNum(ans1)
     strValuesToNum(ans2)
     return habbitsCompatibility(ans1, ans2)
+#
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from parsing_memes import meme_matching, find_link_photo
 
-# import gspread
-# from oauth2client.service_account import ServiceAccountCredentials
-# from parsing_memes import meme_matching, find_link_photo
-#
-# scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-# creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
-# client = gspread.authorize(creds)
-# spreadsheet  = client.open("_Tilda_Form_4559105_20210922195121X_")
-# sheet = spreadsheet.sheet1
-#
-# meme_matching('followthesun', sheet)
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+creds = ServiceAccountCredentials.from_json_keyfile_name('mypython-326612-6af17f4344e7.json', scope)
+client = gspread.authorize(creds)
+spreadsheet  = client.open("_Tilda_Form_4559105_20210922195121X_")
+sheet = spreadsheet.sheet1
+
+meme_matching('followthesun', sheet)
