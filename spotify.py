@@ -2,7 +2,6 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy import oauth2
-from urllib.parse import quote
 
 def normalize_str(string):
     return string.translate(str.maketrans('\\/:*?"<>|', "__       "))
